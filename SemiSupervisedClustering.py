@@ -303,7 +303,7 @@ class IncSemisupervisedClusteringAlgo:
                 for i, sample1 in enumerate(x2):
                     m = self.num_feature
                     ns = 1
-                    z, barf = dgm(self.data, m, sample1, min_dis_sample, ns, nc, self.w, self.nblocks)
+                    z, barf = dgm(self.data, m, sample1, min_dis_sample, ns, nc, self.w)
                     fval[i] = barf
                     x2[i, :] = z
 
@@ -347,7 +347,7 @@ class IncSemisupervisedClusteringAlgo:
                     x3 = x3.reshape(np.size(x3), )
                     m = np.size(x3)
                     ns = 2
-                    sample, fcurrent = dgm(self.data, m, x3, min_dis_sample, ns, nc, self.w,self.nblocks)
+                    sample, fcurrent = dgm(self.data, m, x3, min_dis_sample, ns, nc, self.w)
                     if fcurrent < fbest:
                         fbest = fcurrent
                         xbest = sample
