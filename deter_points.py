@@ -60,17 +60,10 @@ def Clu_Der_Points(x, dataset, min_dis_sample, cluster_plan_nk, cluster_plan_ind
                     l1.append(kmax)
                     l.append(dataset[kmax, :])
                     list_boundary.append(kmax)
-            l11.append(l1_1)  # list: 每一个元素为每一个簇的boundary points
-
+            l11.append(l1_1) 
     contour_points_index = list_boundary
     w_contour_points = w[contour_points_index]
     contour_points = dataset[contour_points_index]
-
-    print('num_contour:',np.size(contour_points_index))
-    # contour_points_index = list_boundary
-    # contour_points_index = [i for i in list_boundary if
-    #                         i not in set(epslion_netPoints_INDEX)]  # remove epslionnet-points
-    # w_contour_points_index = np.ones((len(contour_points_index), 1))
 
     # core points
     #distances = calculate_distances(dataset)
@@ -103,13 +96,10 @@ def Clu_Der_Points(x, dataset, min_dis_sample, cluster_plan_nk, cluster_plan_ind
     bd1 = SI_avg
     bd2 = SI_max
     simid = (bd1 + bd2) / 2
-    #print('SI_max,SI_avg', SI_avg, SI_max)
     while True:
         core_id = np.where(SI_samples > simid)[0]
-        list_corepoints_index = [x for x in core_id if x not in contour_points_index]  # remove boundary-points
-        #print('num_corepoints', len(list_corepoints_index))
+        list_corepoints_index = [x for x in core_id if x not in contour_points_index]  
         ratio_core = len(list_corepoints_index) / np.size(dataset, 0)
-        #('ratio,simid', ratio_core, simid)
         if ratio_core > thresh2:
             bd1 = simid
             simid = (bd1 + bd2) / 2
@@ -122,25 +112,22 @@ def Clu_Der_Points(x, dataset, min_dis_sample, cluster_plan_nk, cluster_plan_ind
     w_corepoints = w[list_corepoints_index]
     core_points = dataset[list_corepoints_index]
 
-    print('num_corepoints:', np.size(list_corepoints_index))
-
     # epsilon_net points
     c1 = 1.0e-9
     f = np.dot(min_dis_sample, w)
 
-    union = set.union(set(list_corepoints_index), set(contour_points_index))  # remove contour and core points
+    union = set.union(set(list_corepoints_index), set(contour_points_index))  
     union = list(union)
     w2 = np.zeros((nrecord,))
     b = np.zeros((nrecord, num_feature))
     n2, b[0:nc, :], iter = nc, x, 0
 
     while True:
-        # epsilon-net points
         w2[0:nc] = np.ones((nc,))
         eps = c1 * f
         l1 = np.zeros((nrecord,), dtype=int)
         l1[union] = 1
-        l3, w1 = [], []   # epsilon-net points 的下标和权重
+        l3, w1 = [], []  
         for i in range(0, nrecord):
             if min_dis_sample[i] <= eps and i not in union:
                 w2[cluster_plan_index[i]] += w[i]  # update weights of the center point
@@ -155,7 +142,7 @@ def Clu_Der_Points(x, dataset, min_dis_sample, cluster_plan_nk, cluster_plan_ind
                     break
                 else:
                     dataset_remain = dataset[list(common_index)]
-                    max_index = np.argmax(min_dis_sample[common_index])  # 这个簇中距离中心最远的点
+                    max_index = np.argmax(min_dis_sample[common_index])  
                     id_sample = common_index[max_index]
                     sample_point = dataset[id_sample]
                     distance = [np.linalg.norm(sample_point - tmp) ** 2 for tmp in dataset_remain]
@@ -184,12 +171,4 @@ def Clu_Der_Points(x, dataset, min_dis_sample, cluster_plan_nk, cluster_plan_ind
     w2 = w2[0:n4+nc]
     w_eps_netPoints = np.array([w2]).T
 
-    # cluster determine points
-    #Clu_Der_Points_index = epslion_netPoints_INDEX + contour_points_index + list_corepoints_index
-    #w_Clu_Der_Points_index = np.concatenate((w_eps_netPoints, w_contour_points_index, w_corepoints_index), axis=1)
-
-    if nblocks == 2:
-        print('stop')
-
-    print('deterpoints',np.size(contour_points_index),np.size(list_corepoints_index),n4+nc)
     return eps, epslion_netPoints, contour_points, core_points, w_eps_netPoints, w_contour_points, w_corepoints
