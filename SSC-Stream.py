@@ -374,14 +374,9 @@ class SemisupervisedClusteringBigDataAlgo():
             pre_must = np.zeros((0, 2))
             Centers = []
             whole_centers = []
-            with open('./results/result_%s.txt' % self.datasetName, 'a') as file:
-                file.write(f'Current time: {time.asctime(time.localtime(time.time()))}''\r\n')
+
             for kblocks in range(1, self.num_blocks + 1):
                 print(f'start computing {kblocks} block, {self.num_blocks} blocks in total')
-                with open('./results/result_%s.txt' % self.datasetName, 'a') as file:
-                    file.write(f'Block No. {kblocks}''\r\n'
-                               f'The number of points from the previous block: {np.size(pre_data, 0)}''\r\n'
-                               f'The number of points at current iteration: {self.nrecord}''\r\n')
                 self._update_data(kblocks, b=pre_data, w2=w2)
                 self.num_DataBlock[kblocks-1] = np.size(self.Org_data, 0)
                 self._thresh_choose_new()
@@ -392,7 +387,7 @@ class SemisupervisedClusteringBigDataAlgo():
                     self.CL_index = np.vstack((self.CL_index, pre_can + self.nrecord1))
 
                 self.nmust, self.ncan = self.ML_index.shape[0], self.CL_index.shape[0]
-                # calculate Hard and easy constraints of the new arrived block
+
                 Hard_can, Easy_can, Hard_must, Easy_must = self.Select_constrints()
 
                 xsolution = Centers
@@ -409,10 +404,7 @@ class SemisupervisedClusteringBigDataAlgo():
                                                                                                                  kblocks)
 
                     Clu_Der_Points_data = np.concatenate((epslion_netPoints, contourPoints, corePoints), axis=0)
-
                     w_Clu_Der_Points = np.concatenate((w_eps, w_contour, w_core), axis=0)
-
-                    # Replace the pairwise points with its epslion_netPoints
                     pre_can, pre_must = self.update_const(Easy_can, Easy_must, eps, Clu_Der_Points_data)
 
                     pre_data = Clu_Der_Points_data
