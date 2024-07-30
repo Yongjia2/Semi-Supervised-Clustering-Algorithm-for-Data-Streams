@@ -144,9 +144,9 @@ class SemisupervisedClusteringBigDataAlgo():
                     self.must_whole[i][1]] * distance_cl_2
                 if f_sum > distance_sum:
                     f_sum = distance_sum
-                    list1[self.must_whole[i][0]] = j  # 把该点所属的cluster加到list1中
+                    list1[self.must_whole[i][0]] = j 
                     list1[self.must_whole[i][1]] = j
-                    min_dis_sample[self.must_whole[i][0]] = distance_cl_1  # 该点到该簇中心的距离
+                    min_dis_sample[self.must_whole[i][0]] = distance_cl_1  
                     min_dis_sample[self.must_whole[i][1]] = distance_cl_2
 
         return list1, min_dis_sample
@@ -159,7 +159,7 @@ class SemisupervisedClusteringBigDataAlgo():
             distance = np.array([np.linalg.norm(sample - tmp) ** 2 for tmp in x])
             index = np.argmin(distance)
             min_dis_sample_1[i] = distance[index]
-            cluster_plan[index, i] = 1  # 0,1 矩阵
+            cluster_plan[index, i] = 1  
 
         cluster_plan_index = np.argmax(cluster_plan, axis=0)
         cluster_plan_nk = [np.where(tmp == 1) for tmp in cluster_plan]
